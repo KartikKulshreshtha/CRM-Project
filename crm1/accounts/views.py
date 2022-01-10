@@ -31,6 +31,8 @@ def register(request):
         'form': form
     }
     return render(request, 'accounts/register.html', context)
+
+
 @unauthenticated_user
 def login_page(request):
     if request.method == "POST":
@@ -48,6 +50,7 @@ def login_page(request):
 def logout_page(request):
     logout(request)
     return redirect('login')
+
 
 @login_required(login_url='login')
 @admin_only
@@ -67,6 +70,8 @@ def home(request):
         'pending': pending,
     }
     return render(request, 'accounts/dashboard.html', context)
+
+
 @login_required(login_url='login')
 @allowed_user(allowed_roles=['customer'])
 def userPage(request):
@@ -77,6 +82,23 @@ def userPage(request):
     pending = orders.filter(status='Pending').count()
     context = {'orders': orders, 'total_orders': total_orders, 'delivered': delivered, 'pending': pending}
     return render(request, 'accounts/user.html', context)
+
+
+@login_required(login_url='login')
+@allowed_user(allowed_roles=['customer'])
+def account_settings(request):
+    customer = request.user.customer
+    form = CustomerForm(instance=customer)
+    
+    if request.method == "POST":
+        form = CustomerForm(request.POST, request.FILES, instance=customer)
+        if form.is_valid():
+            form.save()
+    
+    context = {
+        'form': form
+    }
+    return render(request, 'accounts/accounts_settings.html', context)
 
 
 @login_required(login_url='login')
@@ -105,6 +127,7 @@ def customer(request, pk):
     }
     return render(request, 'accounts/customer.html', context)
 
+
 @login_required(login_url='login')
 @allowed_user(allowed_roles=['admin'])
 def createOrder(request, id):
@@ -118,6 +141,7 @@ def createOrder(request, id):
             return redirect('home')
     context = {'forms': formset, 'customer': customer}
     return render(request, 'accounts/order_form.html', context)
+
 
 @login_required(login_url='login')
 @allowed_user(allowed_roles=['admin'])

@@ -18,7 +18,8 @@ class OrderForm(ModelForm):
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'phone', 'email']
+        fields = ['name', 'phone', 'email', 'profile_pic']
+        exclude = ['user']
         
         
 class CreateUserForm(UserCreationForm):
