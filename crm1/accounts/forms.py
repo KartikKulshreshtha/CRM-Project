@@ -11,7 +11,7 @@ from django import forms
 class OrderForm(ModelForm):
     class Meta:
         model = Order
-        fields = ['customer', 'product', 'status']
+        fields = '__all__'
         
         
         

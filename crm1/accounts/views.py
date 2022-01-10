@@ -15,16 +15,10 @@ from .decorators import unauthenticated_user, allowed_user, admin_only
 def register(request):
     form = CreateUserForm()
     if request.method == "POST":
-        print('Aa rhi hai')
         form = CreateUserForm(request.POST)
-        print(form)
         if form.is_valid():
             user = form.save() 
             username = form.cleaned_data.get('username')
-            
-            group = Group.objects.get(name='customer')
-            user.groups.add(group)
-            Customer.objects.create(user=user)
             messages.success(request, f"{username}, you  registered your account successfully!!")
             return redirect('login')
     context = {
@@ -135,6 +129,7 @@ def createOrder(request, id):
     customer = Customer.objects.get(id=id)
     formset = OrderFormSet(queryset=Order.objects.none(), instance=customer)
     if request.method == "POST":
+        form = OrderForm(request.POST)
         formset = OrderFormSet(request.POST, instance=customer)
         if formset.is_valid():
             formset.save()
